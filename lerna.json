@@ -22,13 +22,13 @@
 		},
 		"bootstrap": {
 			"scope": [
-				"@speedy/*"
+				"@ngx-http-cache-control/*"
 			],
 			"hoist": true
 		},
 		"exec": {
 			"scope": [
-				"@speedy/*"
+				"@ngx-http-cache-control/*"
 			]
 		},
 		"clean": {

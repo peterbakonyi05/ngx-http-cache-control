@@ -1,15 +1,15 @@
 {
-  "name": "@speedy/package-1",
+  "name": "@ngx-http-cache-control/core",
   "version": "0.0.0",
-  "description": "Sample project",
-  "author": "Alan Agius",
+  "description": "",
+  "author": "Peter Bakonyi",
   "license": "MIT",
   "dependencies": {
     "tslib": "^1.9.0"
   },
   "peerDependencies": {
     "@angular/common": "^7.0.0",
-    "@angular/core": "^6.0.0",
+    "@angular/core": "^7.0.0",
     "rxjs": "^6.0.0"
   }
 }

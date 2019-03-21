@@ -3,10 +3,10 @@
 	"compilerOptions": {
 		"declaration": true,
 		"paths": {
-			"@speedy/*/testing": [
+			"@ngx-http-cache-control/*/testing": [
 				"packages/*/dist/testing"
 			],
-			"@speedy/*": [
+			"@ngx-http-cache-control/*": [
 				"packages/*/dist"
 			]
 		}

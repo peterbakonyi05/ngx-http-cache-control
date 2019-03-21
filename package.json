@@ -1,5 +1,5 @@
 {
-	"name": "@speedy/ng-mono-repo",
+	"name": "@ngx-http-cache-control/mono-repo",
 	"version": "0.0.0",
 	"private": true,
 	"scripts": {
@@ -40,8 +40,8 @@
 		"rimraf": "^2.6.2",
 		"rxjs": "^6.0.0",
 		"scss-bundle": "^2.1.0",
-    "tslib": "^1.9.0",
-    "tsickle": "^0.34.0",
+		"tslib": "^1.9.0",
+		"tsickle": "^0.34.0",
 		"typescript": "~3.2.0",
 		"zone.js": "^0.8.16"
 	}

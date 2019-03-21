@@ -27,7 +27,7 @@
 			"jest"
 		],
 		"paths": {
-			"@speedy/*": [
+			"@ngx-http-cache-control/*": [
 				"packages/*/index.ts"
 			]
 		}

@@ -9,8 +9,7 @@ module.exports = {
 			"lodash": "_",
 
 			// local
-			"@speedy/package-1": "speedy.package-1",
-			"@speedy/package-1/testing": "speedy.package-1.testing",
+			"@ngx-http-cache-control/core": "ngx-http-cache-control.core"
 		}
 	},
 	whitelistedNonPeerDependencies: ["."]
