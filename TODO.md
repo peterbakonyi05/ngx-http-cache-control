@@ -20,7 +20,7 @@
 * ~~Create dummy cache interceptor with empty unit tests~~
 * ~~Create implementation that has basic caching~~
 * ~~Make sure interceptor is singleton for all apps~~
-* Add storage interface with in memory storage
+* ~~Add storage interface with in memory storage~~
 * Add Cache-Control header parse
     * support `max-age` first: number of seconds response can be cached
     * support `no-cache`: use Etag to check, so there is a round trip but network traffic can be skipped

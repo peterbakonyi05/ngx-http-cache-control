@@ -29,6 +29,7 @@
 		"@types/fs-extra": "^5.0.0",
 		"@types/jest": "^23.0.0",
 		"@types/lodash": "^4.14.87",
+		"@types/lru-cache": "4.1.0",
 		"cross-env": "^5.2.0",
 		"fs-extra": "^7.0.0",
 		"jest": "^23.0.0",

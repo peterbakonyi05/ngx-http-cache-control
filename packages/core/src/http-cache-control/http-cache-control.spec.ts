@@ -48,9 +48,13 @@ describe("HttpCacheControlIntegrationSpecs", () => {
 		let firstReq: TestRequest;
 		let firstResponse: object;
 
-		beforeEach(() => {
+		beforeEach(done => {
 			httpClient.get("/api/heroes").subscribe(resp => firstResponse = resp);
-			firstReq = httpBackend.match(req => req.url === "/api/heroes")[0];
+			// in memory cache resolves promise async
+			setTimeout(() => {
+				firstReq = httpBackend.match(req => req.url === "/api/heroes")[0];
+				done();
+			});
 		});
 
 		it("should send a request", () => {
