@@ -2,7 +2,7 @@ import { TestBed } from "@angular/core/testing";
 
 import { HttpCacheControlInterceptor } from "./http-cache-control.interceptor";
 
-describe("HttpCacheControlInterceptorSpecs", () => {
+describe("HttpCacheControlInterceptorUnitSpecs", () => {
 
 	let httpCacheControlInterceptor: HttpCacheControlInterceptor;
 
