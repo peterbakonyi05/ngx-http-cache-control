@@ -41,9 +41,13 @@ If all those API calls return Cache-Control headers and allow caching for 30 min
 
 ## How does it work?
 
-HTTP specifies Cache-Control headers to levarge the performance improvement of caching. Documentation of Cache Control:
+HTTP specifies Cache-Control headers to levarge the performance improvement of caching. Documentation of Cache Control.
+Read a short explanation:
 * https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching
+More detailed:
 * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
+Specs:
+* https://httpwg.org/specs/rfc7234.html
 
 
 

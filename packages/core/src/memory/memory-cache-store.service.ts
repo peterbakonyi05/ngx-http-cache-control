@@ -1,12 +1,14 @@
 import { Injectable, Inject, Optional } from "@angular/core";
 import * as LRU from "lru-cache";
-import { CachedHttpResponse, HttpCacheStore } from "../cache-store/cache-store.model";
+
+import { CacheStore } from "../cache-store/cache-store.model";
+
 import { T_MEMORY_CACHE_STORE_CONFIG, MemoryCacheStoreConfig } from "./memory-cache-store.model";
 
 @Injectable({ providedIn: "root" })
-export class MemoryCacheStoreService implements HttpCacheStore {
+export class MemoryCacheStoreService<T> implements CacheStore<T> {
 
-	private cache: LRU.Cache<string, CachedHttpResponse>;
+	private cache: LRU.Cache<string, T>;
 
 	constructor(
 		@Optional() @Inject(T_MEMORY_CACHE_STORE_CONFIG) config: MemoryCacheStoreConfig | null
@@ -17,12 +19,12 @@ export class MemoryCacheStoreService implements HttpCacheStore {
 		});
 	}
 
-	async storeResponse(key: string, response: CachedHttpResponse): Promise<void> {
-		this.cache.set(`c:${key}`, response);
+	async add(key: string, item: T, maxAge?: number): Promise<void> {
+		this.cache.set(key, item, maxAge);
 	}
 
-	async getResponse(key: string): Promise<CachedHttpResponse | undefined> {
-		return this.cache.get(`c:${key}`);
+	async get(key: string): Promise<T | undefined> {
+		return this.cache.get(key);
 	}
 
 }

@@ -10,6 +10,7 @@
 * setup Renovate
 * test release process and release npm package
 * publish documentation
+* add Linter to skeleton
 
 ## Documentation
 * Add root README
@@ -21,7 +22,7 @@
 * ~~Create implementation that has basic caching~~
 * ~~Make sure interceptor is singleton for all apps~~
 * ~~Add storage interface with in memory storage~~
-* Add Cache-Control header parse
+* ~~Add Cache-Control header parse~~
     * support `max-age` first: number of seconds response can be cached
     * support `no-cache`: use Etag to check, so there is a round trip but network traffic can be skipped
     * support `no-store`: do not cache at all
@@ -29,14 +30,18 @@
          * can be cached, if if status code is normally not cache-able or authentication is associated with it
     * support `private`: interceptor shouldn't cache since it can be different by each user
 * Add support for Etag, 304, If-None-Match logic
-* Add support for Vary headers
+* Check if cache policy should also be stored in the cache
+    * probably yes since then request might not need to be stored!!!
 * Check edge-cases
     * security and authentication
-    * which status codes can be cached, which cannot?
-    * max-age invalid values
+    * ~~which status codes can be cached, which cannot?~~
+    * ~~max-age invalid values~~
+* Investigate and maybe add support for different Vary headers
+    * With current implementation when there is an incoming new request with a different vary, it will simply override the previous request in the cache. Investigate and potentially implement an option whether requests to the same url with different headers should be treated differently or not. Before also check how it is implemented exactly in `http-cache-semantics` 
 * Write core README
 * Publish beta
 * Future improvements
+    * double-check `trustServerDate` option ==> makes sense to expose these
     * add blacklisting of urls with glob pattern?
     * support logging maybe with events?
     * sharing ongoing requests before first response arrives

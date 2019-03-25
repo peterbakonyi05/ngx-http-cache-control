@@ -61,9 +61,13 @@ describe("HttpCacheControlIntegrationSpecs", () => {
 			expect(firstReq).toBeDefined();
 		});
 
-		describe("and response is sent by the server", () => {
+		describe("and response sent by the server is cacheable", () => {
 			beforeAll(() => {
-				firstReq.flush(MOCK_RESPONSE);
+				firstReq.flush(MOCK_RESPONSE, {
+					headers: {
+						"cache-control": "max-age=100"
+					}
+				});
 			});
 
 			it("should get the correct response", () => {

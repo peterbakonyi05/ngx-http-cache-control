@@ -1,18 +1,11 @@
 import { InjectionToken } from '@angular/core';
 
-export interface CachedHttpResponse {
-	url: string;
-	status: number;
-	statusText: string;
-	headers: Record<string, string | string[]>;
-	body: any;
+export interface CacheStore<T = any> {
+
+	get(key: string): Promise<T | undefined>;
+
+	add(key: string, item: T, maxAge?: number): Promise<void>;
+
 }
 
-
-export interface HttpCacheStore {
-	getResponse(key: string): Promise<CachedHttpResponse | undefined>;
-
-	storeResponse(key: string, content: CachedHttpResponse): Promise<void>;
-}
-
-export const T_HTTP_CACHE_STORE = new InjectionToken<HttpCacheStore>("T_HTTP_CACHE_STORE");
+export const T_CACHE_STORE = new InjectionToken<CacheStore>("T_CACHE_STORE");

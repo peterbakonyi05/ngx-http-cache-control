@@ -1,7 +1,8 @@
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
-import { CachedHttpResponse } from './cache-store.model';
 
-export function convertCachedResponseToNgResponse(response: CachedHttpResponse): HttpResponse<any> {
+import { PlainHttpResponse } from "./http-cache-control.model";
+
+export function convertPlainResponseToNgResponse(response: PlainHttpResponse): HttpResponse<any> {
 	return new HttpResponse({
 		url: response.url,
 		status: response.status,
@@ -11,7 +12,7 @@ export function convertCachedResponseToNgResponse(response: CachedHttpResponse):
 	});
 }
 
-export function convertNgResponseToCachedResponse(response: HttpResponse<any>): CachedHttpResponse {
+export function convertNgResponseToPlainResponse(response: HttpResponse<any>): PlainHttpResponse {
 	return {
 		url: response.url!,
 		status: response.status,
