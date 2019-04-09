@@ -8,6 +8,10 @@ import { T_CACHE_POLICY_OPTIONS, CachePolicyOptions } from './http-cache-control
 
 /**
  * Register this module at the root server module.
+ *
+ * Provide `T_MEMORY_CACHE_STORE_CONFIG` token at an application level to configure the in-memory cache size.
+ *
+ * Provide `T_CACHE_POLICY_OPTIONS` token at an application level to configure cache settings. Probably default values will just do fine.
  */
 @NgModule({
 	providers: [
@@ -32,8 +36,9 @@ export class HttpCacheControlCoreModule {
 }
 
 let cacheControlInterceptor: HttpCacheControlInterceptor | undefined;
-// Angular creates a new app instance for each incoming request.
-// Interceptor instance should be singleton on the server.
+/** Angular creates a new app instance for each incoming request.
+ *  Interceptor instance should be singleton on the server.
+ */
 export function _httpCacheControlInterceptorFactory(store: CacheStore, options: CachePolicyOptions | null) {
 	if (cacheControlInterceptor) {
 		return cacheControlInterceptor;
