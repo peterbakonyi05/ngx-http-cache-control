@@ -1,68 +1,59 @@
-[![CircleCI](https://circleci.com/gh/alan-agius4/ng-mono-repo-starter.svg?style=svg)](https://circleci.com/gh/alan-agius4/ng-mono-repo-starter)
-[![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg?style=flat-square)](https://renovateapp.com/)
+[![CircleCI](https://circleci.com/gh/peterbakonyi05/ngx-http-cache-control.svg?style=svg)](https://circleci.com/gh/peterbakonyi05/ngx-http-cache-control)
 
-<p align="center">
-	<img alt="Angular and Lerna logos" src="https://s18.postimg.cc/sle6bfuvt/ng-mono-repo.png">
-</p>
 
-# Angular Mono Repo Starter
-An Angular mono repository starter kit featuring `Jest`, `Lerna`, `Compodoc`, `scss-bundle` and `ng-packagr`.
+# Angular Http Cache Control Mono Repo
+An Angular mono repository to provide HTTP layer caching when making HTTP calls during server-side rendering.
 
-## Features
-- Flatten SCSS output into a single file to improve build time for consumers
-- Supports scoped packages
-- Supports secondary entries similar to Angular's Testing Modules.
-- All the other features that `Jest`, `Lerna`, `Compodoc` and `ng-packagr` provide.
+Mono-repo structure is based on [Angular Mono Repo Starter](https://github.com/alan-agius4/ng-mono-repo-starter).
 
-## The Stack
- - [Lerna](https://lernajs.io) - A tool for managing JavaScript projects with multiple packages. One of the major advantage of Lerna is semantic releases and package version syncing.
- - [Jest](https://facebook.github.io/jest) - Jest is used by Facebook to test all JavaScript code including React applications. One of Jest's philosophies is to provide an integrated "zero-configuration" experience.
- - [ng-packagr](https://github.com/dherges/ng-packagr) - Transpile and Bundle libraries to Angular Package Format.
- - [Compodoc](https://compodoc.github.io/website/guides/getting-started.html) - Compodoc is a documentation tool for Angular applications & libraries. It generates awesome static documentation.
- - [scss-bundle](https://github.com/SimplrJS/scss-bundle) - Bundles all SCSS imports into a single file
+## Packages
+- [@ngx-http-cache-control/core](./packages/core/README.md)
 
-## Get Started
-To get started, you need to:
+## Future plans
+Check the [TODOs](./TODO.md)
+
+## Contributing
+
+### Getting started
 
 1) Clone the repository
 ```shell
-git clone https://github.com/alan-agius4/ng-mono-repo-starter.git <project_name>
+git clone https://github.com/peterbakonyi05/ngx-http-cache-control <project_name>
 ```
 
 2) Install dependencies
-```
+```shell
 cd <project_name>
 npm install
 ```
 
-Note: There is a `postinstall` script that after `npm install` has finished will bootstrap the mono repo.
+3) During development
+```shell
+# suggested and fastest option: running the specs in watch mode
+npm t -- --watch
+# or build once and try it with your application
+npm run build
+# or run inceremental builds while trying with your application
+npm run watch
+```
 
-## Setting your project scope
-It is recommanded that you use [scoped](https://docs.npmjs.com/misc/scope) npm packages. This is set to `@speedy` by default. To change it you need to modify a couple of files.
 
-These are:
-- `tsconfig.json`
-- `tsconfig.build.json`
-- `lerna.json`
-- `jest.config.js`
+### NPM Tasks
 
-## NPM Tasks
-
-| Task         | Description                                                                                                                                                                                |
-| ------------ | -------------------------------------------------------------------------------------------------                                                                                          |
-| aio          | Generates a static documentation of your libraries                                                                                                                                         |
-| bootstrap    | Install packages dependencies and bootstrap the mono repo                                                                                                                                  |
-| build        | Build all the packages inside the mono repo                                                                                                                                                |
-| watch        | Build all the packages inside the mono repo and perform an incremental build when a file changes (NB: in case you have cross dependencies it's recommanded that you first perform a build) |
-| build-tools  | Build the tools script that are used for building the mono repo                                                                                                                            |
-| clean        | Clean up packages `node_modules` and `dist` folders                                                                                                                                        |
-| test         | Run unit and integration tests                                                                                                                                                             |
-| test-debug   | Run unit and integration tests in debug mode                                                                                                                                               |
-| test-tdd     | Run unit and integration tests in watch mode                                                                                                                                               |
-| release      | Runs `lerna publish $@`, but with the underlying `npm publish` calls patched to use the `dist` subdirectory. E.g. `npm run release premajor --preid alpha --npm-tag alpha`                     |
-
-## Testing
-For this project, I chose Jest as our test framework. While Karma is probably more common for Angular testing, Karma is slower and doesn't offer some important features that Jest does.
+| Task         | Description                                                                                                                                            |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------|
+| aio          | Generates a static documentation of the libraries                                                                                                      |
+| bootstrap    | Install packages dependencies and bootstrap the mono repo                                                                                              |
+| build        | Build all the packages inside the mono repo                                                                                                            |
+| watch        | Build all the packages inside the mono repo and perform an incremental build when a file changes (NB: it's recommanded that you first perform a build) |
+| build-tools  | Build the tools script that are used for building the mono repo                                                                                        |
+| clean        | Clean up packages `node_modules` and `dist` folders                                                                                                    |
+| test         | Run unit and integration tests                                                                                                                         |
+| test-debug   | Run unit and integration tests in debug mode                                                                                                           |
+| test-tdd     | Run unit and integration tests in watch mode                                                                                                           |                   
 
 ### Using the debugger in VS Code
-Debugging is one of the places where VS Code really shines over other editors. This project comes pre-configured `launch.json`. All you need to do is hit `F5` in `VS Code` and get debugging!
+This project comes pre-configured `launch.json`. All you need to do is hit `F5` in `VS Code` while a `.spec.ts` file is opened and get debugging!
+
+### When creating a PR
+Please follow [Angular's commit guidelines](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#commit)

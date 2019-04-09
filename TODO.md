@@ -10,7 +10,7 @@
 * setup Renovate
 * test release process and release npm package
 * publish documentation
-* add Linter to skeleton
+* add Linter to skeleton and downmerge
 
 ## Documentation
 * Add root README
