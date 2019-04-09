@@ -19,7 +19,7 @@ export class MemoryCacheStoreService<T> implements CacheStore<T> {
 		});
 	}
 
-	async add(key: string, item: T, maxAge?: number): Promise<void> {
+	async set(key: string, item: T, maxAge?: number): Promise<void> {
 		this.cache.set(key, item, maxAge);
 	}
 

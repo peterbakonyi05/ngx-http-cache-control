@@ -4,7 +4,7 @@ export interface CacheStore<T = any> {
 
 	get(key: string): Promise<T | undefined>;
 
-	add(key: string, item: T, maxAge?: number): Promise<void>;
+	set(key: string, item: T, maxAge?: number): Promise<void>;
 
 }
 

@@ -14,7 +14,7 @@ describe("HttpCacheControlInterceptorUnitSpecs", () => {
 				{
 					provide: T_CACHE_STORE,
 					useValue: {
-						add: jasmine.createSpy("add"),
+						set: jasmine.createSpy("set"),
 						get: jasmine.createSpy("get")
 					} as CacheStore
 				},
