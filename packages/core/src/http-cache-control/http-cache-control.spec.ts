@@ -27,11 +27,15 @@ const MOCK_VILLAIN_RESPONSE = {
 
 const MOCK_MAX_AGE_SEC = 5;
 
+/**
+ * Note: interceptor (and cache) is shared for all specs to better simulate the real behavior.
+ * That is why URLs have `v1` and `v2` to make sure they are not in the cache for unrelated specs.
+ */
 describe("HttpCacheControlIntegrationSpecs", () => {
 	let httpBackend: HttpTestingController;
 	let httpClient: HttpClient;
 
-	beforeEach(() => {
+	beforeAll(() => {
 		TestBed.configureTestingModule({
 			imports: [
 				HttpClientTestingModule,
@@ -51,11 +55,11 @@ describe("HttpCacheControlIntegrationSpecs", () => {
 		let firstReq: TestRequest;
 		let firstResponse: object;
 
-		beforeEach(async () => {
-			httpClient.get("/api/heroes").subscribe(resp => firstResponse = resp);
+		beforeAll(async () => {
+			httpClient.get("/api/v1/heroes").subscribe(resp => firstResponse = resp);
 			// in memory cache resolves promise async
 			await Promise.resolve();
-			firstReq = httpBackend.match(req => req.url === "/api/heroes")[0];
+			firstReq = httpBackend.match(req => req.url === "/api/v1/heroes")[0];
 		});
 
 		it("should send a request", () => {
@@ -80,8 +84,8 @@ describe("HttpCacheControlIntegrationSpecs", () => {
 				let secondResponse: object;
 
 				beforeAll(() => {
-					httpClient.get("/api/heroes").subscribe(resp => secondResponse = resp);
-					secondReq = httpBackend.match(req => req.url === "/api/heroes")[0];
+					httpClient.get("/api/v1/heroes").subscribe(resp => secondResponse = resp);
+					secondReq = httpBackend.match(req => req.url === "/api/v1/heroes")[0];
 				});
 
 				it("should not send a request", () => {
@@ -99,9 +103,9 @@ describe("HttpCacheControlIntegrationSpecs", () => {
 
 				beforeAll(async () => {
 					DateMock.advanceBy(MOCK_MAX_AGE_SEC * 1000);
-					httpClient.get("/api/heroes").subscribe(resp => secondResponse = resp);
+					httpClient.get("/api/v1/heroes").subscribe(resp => secondResponse = resp);
 					await Promise.resolve();
-					secondReq = httpBackend.match(req => req.url === "/api/heroes")[0];
+					secondReq = httpBackend.match(req => req.url === "/api/v1/heroes")[0];
 					secondReq.flush(MOCK_RESPONSE_NEW, {
 						headers: {
 							"cache-control": `max-age=${MOCK_MAX_AGE_SEC}`
@@ -123,9 +127,9 @@ describe("HttpCacheControlIntegrationSpecs", () => {
 				let secondResponse: object;
 
 				beforeAll(async () => {
-					httpClient.get("/api/villains").subscribe(resp => secondResponse = resp);
+					httpClient.get("/api/v1/villains").subscribe(resp => secondResponse = resp);
 					await Promise.resolve();
-					secondReq = httpBackend.match(req => req.url === "/api/villains")[0];
+					secondReq = httpBackend.match(req => req.url === "/api/v1/villains")[0];
 					secondReq.flush(MOCK_VILLAIN_RESPONSE);
 				});
 
@@ -138,47 +142,74 @@ describe("HttpCacheControlIntegrationSpecs", () => {
 				});
 			});
 		});
+	});
 
-		describe("and response sent by the server is cacheable and supports revalidation", () => {
-			beforeAll(() => {
-				firstReq.flush(MOCK_RESPONSE, {
+	describe("when response sent by the server is cacheable with revalidation support", () => {
+		beforeAll(async () => {
+			httpClient.get("/api/v2/heroes").subscribe();
+			// in memory cache resolves promise async
+			await Promise.resolve();
+			const firstReq = httpBackend.match(req => req.url === "/api/v2/heroes")[0];
+			firstReq.flush(MOCK_RESPONSE, {
+				headers: {
+					"cache-control": `max-age=${MOCK_MAX_AGE_SEC}`,
+					"etag": "abc123"
+				}
+			});
+		});
+
+		describe("and server responsds with not modified after cache expires", () => {
+			let secondReq: TestRequest;
+			let secondResponse: object;
+
+			beforeAll(async () => {
+				DateMock.advanceBy(MOCK_MAX_AGE_SEC * 1000 + 1);
+				httpClient.get("/api/v2/heroes").subscribe(resp => secondResponse = resp);
+				await Promise.resolve();
+				secondReq = httpBackend.match(req => req.url === "/api/v2/heroes")[0];
+				secondReq.flush(null, {
+					status: 304,
+					statusText: "Not Modified",
 					headers: {
-						"cache-control": `max-age=${MOCK_MAX_AGE_SEC}`,
-						"etag": "abc123"
+						"etag": "abc123",
+						"cache-control": `max-age=${MOCK_MAX_AGE_SEC}`
 					}
 				});
 			});
 
-			describe("and cache expires before the second request comes", () => {
-				let secondReq: TestRequest;
-				let secondResponse: object;
+			it("should send the etag token", () => {
+				expect(secondReq.request.headers.get("if-none-match")).toEqual("abc123");
+			});
 
-				beforeAll(async () => {
-					DateMock.advanceBy(MOCK_MAX_AGE_SEC * 1000 + 1);
-					httpClient.get("/api/heroes").subscribe(resp => secondResponse = resp);
-					await Promise.resolve();
-					secondReq = httpBackend.match(req => req.url === "/api/heroes")[0];
-					secondReq.flush(null, {
-						status: 304,
-						statusText: "Not Modified",
-						headers: {
-							"etag": "abc123",
-							"cache-control": `max-age=${MOCK_MAX_AGE_SEC}`
-						}
-					});
-				});
+			it("should set the response reusing the old data", () => {
+				expect(secondResponse).toEqual(MOCK_RESPONSE);
+			});
 
-				it("should send a second request", () => {
-					expect(secondReq).toBeDefined();
-				});
+		});
 
-				it("should send the etag token", () => {
-					expect(secondReq.request.headers.get("if-none-match")).toEqual("abc123");
-				});
+		describe("and server responsds with an updated response after cache expires", () => {
+			let secondReq: TestRequest;
+			let secondResponse: object;
 
-				it("should set the response reusing the old data", () => {
-					expect(secondResponse).toEqual(MOCK_RESPONSE);
+			beforeAll(async () => {
+				DateMock.advanceBy(MOCK_MAX_AGE_SEC * 1000 + 1);
+				httpClient.get("/api/v2/heroes").subscribe(resp => secondResponse = resp);
+				await Promise.resolve();
+				secondReq = httpBackend.match(req => req.url === "/api/v2/heroes")[0];
+				secondReq.flush(MOCK_RESPONSE_NEW, {
+					headers: {
+						"etag": "def456",
+						"cache-control": `max-age=${MOCK_MAX_AGE_SEC}`
+					}
 				});
+			});
+
+			it("should send the etag token", () => {
+				expect(secondReq.request.headers.get("if-none-match")).toEqual("abc123");
+			});
+
+			it("should set the response with thew new data", () => {
+				expect(secondResponse).toEqual(MOCK_RESPONSE_NEW);
 			});
 		});
 	});
