@@ -13,9 +13,9 @@
 * add Linter to skeleton and downmerge
 
 ## Documentation
-* Add root README
-* Add root CHANGELOG
-* Add CONTRIBUTING
+* ~~Add root README~~
+* ~~Add CONTRIBUTING~~
+* Add root CHANGELOG after first release
 
 ## Core
 * ~~Create dummy cache interceptor with empty unit tests~~
@@ -36,19 +36,19 @@
     * security and authentication
     * ~~which status codes can be cached, which cannot?~~
     * ~~max-age invalid values~~
-* Investigate and maybe add support for different Vary headers
-    * With current implementation when there is an incoming new request with a different vary, it will simply override the previous request in the cache. Investigate and potentially implement an option whether requests to the same url with different headers should be treated differently or not. Before also check how it is implemented exactly in `http-cache-semantics` 
 * Write core README
 * Publish beta
-* Future improvements
-    * double-check `trustServerDate` option ==> makes sense to expose these
-    * add blacklisting of urls with glob pattern?
-    * support logging maybe with events?
-    * sharing ongoing requests before first response arrives
-        * minimal gain but can cause issues (what happens if a request is shared that shouldn't have been shared?)
+* support logging and debug mode
+* Investigate and maybe add support for different Vary headers
+    * With current implementation when there is an incoming new request with a different vary, it will simply override the previous request in the cache. Investigate and potentially implement an option whether requests to the same url with different headers should be treated differently or not. Before also check how it is implemented exactly in `http-cache-semantics` 
+* double-check `trustServerDate` option ==> makes sense to expose these
+* Question: add blacklisting of urls with glob pattern?
+* sharing ongoing requests before first response arrives
+    * minimal gain but can cause issues (what happens if a request is shared that shouldn't have been shared?)
+    * most probably does not worth the effort
 
 ## Redis
-* Write redis README
 * Create redis storage
+* Write redis README
 * Investigate what options need to be published
 * Publish beta
