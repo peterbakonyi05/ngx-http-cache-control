@@ -102,14 +102,14 @@ import { Injectable } from "@angular/core";
 import { CacheStore } from "@ngx-http-cache-control/core"
 
 @Injectable()
-export class MyCacheStore implements CacheStore {
+export class MyCacheStore<T> implements CacheStore<T> {
 
     /**
      * Return the data cached behind this key.
      * Don't forget to deserialize if you stored the data serialized
      */
     get(key: string): Promise<T | undefined> {
-        // TODO: implement
+        // implementation comes here
     }
 
     /**
@@ -122,7 +122,7 @@ export class MyCacheStore implements CacheStore {
      * Library validates max age based on the headers and won't use cached response if it expired
      */
     set(key: string, item: T, maxAge?: number): Promise<void> {
-        // TODO: implement
+        // implementation comes here
     }
 }
 
