@@ -7,8 +7,8 @@
 * ~~setup GIT repo~~
 * ~~clean skeleton~~
 * setup Cicle CI pipeline
-* setup Renovate
 * test release process and release npm package
+* setup Renovate
 * publish documentation
 * add Linter to skeleton and downmerge
 
@@ -16,6 +16,7 @@
 * ~~Add root README~~
 * ~~Add CONTRIBUTING~~
 * Add root CHANGELOG after first release
+* Publish generated documenation on Github part of the CI pipeline
 
 ## Core
 * ~~Create dummy cache interceptor with empty unit tests~~
