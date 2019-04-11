@@ -7,7 +7,7 @@ An Angular mono repository to provide HTTP layer caching when making HTTP calls 
 Mono-repo structure is based on [Angular Mono Repo Starter](https://github.com/alan-agius4/ng-mono-repo-starter).
 
 ## Packages
-- [@ngx-http-cache-control/core](./packages/core/README.md)
+- [@ngx-http-cache-control/core](packages/core/README.md)
 
 ## Future plans
 Check the [TODOs](./TODO.md)
