@@ -6,10 +6,12 @@
 ## Chore
 * ~~setup GIT repo~~
 * ~~clean skeleton~~
-* setup Cicle CI pipeline
-* test release process and release npm package
+* ~~setup Cicle CI pipeline~~
+* ~~test PR process (integrating with Circle CI)~~
 * setup Renovate
+* test release process and release npm package
 * publish documentation
+* fix `@lerna/npm-publish` typings issue in skeleton
 * add Linter to skeleton and downmerge
 
 ## Documentation
@@ -33,11 +35,11 @@
 * ~~Add support for Etag, 304, If-None-Match logic~~
 * ~~Check if cache policy should also be stored in the cache~~
 * ~~Verify if cache policy time to live should be used (it shouldn't be used when etag is set)~~
-* Check edge-cases
-    * security and authentication
+* ~~Check~~
+    * ~~security and authentication~~
     * ~~which status codes can be cached, which cannot?~~
     * ~~max-age invalid values~~
-* Write core README
+* ~~Write core README~~
 * Publish beta
 * support logging and debug mode
 * Investigate and maybe add support for different Vary headers
