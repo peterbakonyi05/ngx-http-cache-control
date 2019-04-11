@@ -36,4 +36,4 @@ export interface CachePolicyOptions {
 	trustServerDate?: boolean,
 }
 
-export const T_CACHE_POLICY_OPTIONS = new InjectionToken("T_CACHE_POLICY_OPTIONS");
+export const T_CACHE_POLICY_OPTIONS = new InjectionToken<CachePolicyOptions>("T_CACHE_POLICY_OPTIONS");
