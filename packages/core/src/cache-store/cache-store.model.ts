@@ -1,4 +1,4 @@
-import { InjectionToken } from '@angular/core';
+import { InjectionToken } from "@angular/core";
 
 /**
  * Generic cache store interface. Consumer of the package can override it using `T_CACHE_STORE` token
