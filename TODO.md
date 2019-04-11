@@ -31,7 +31,7 @@
     * support `private`: interceptor shouldn't cache since it can be different by each user
 * ~~Add support for Etag, 304, If-None-Match logic~~
 * ~~Check if cache policy should also be stored in the cache~~
-* Verify if cache policy time to live should be used (when response equires, it cannot be used with etags)
+* ~~Verify if cache policy time to live should be used (it shouldn't be used when etag is set)~~
 * Check edge-cases
     * security and authentication
     * ~~which status codes can be cached, which cannot?~~

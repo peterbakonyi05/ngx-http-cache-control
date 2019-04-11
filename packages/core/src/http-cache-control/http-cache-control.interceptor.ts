@@ -52,20 +52,22 @@ export class HttpCacheControlInterceptor implements HttpInterceptor {
 							headers: new HttpHeaders(updatedHeaders)
 						});
 						return this.runHandler(updatedNgReq, handler, ngResponse => {
-							const updatedresponse = convertNgResponseToPlainResponse(ngResponse);
-							const { policy, modified } = cachePolicy.revalidatedPolicy(updatedReq, updatedresponse);
-							this.cacheStore.set(updatedReq.url, {
-								cachePolicy: policy.toObject(),
-								response: modified ? updatedresponse : cacheEntry.response
-								// TODO: because of this it might be removed from cache when it shouldn't (etag)
-								// }, cachePolicy.timeToLive());
-							});
+							const updatedResponse = convertNgResponseToPlainResponse(ngResponse);
+							const { policy: updatedolicy, modified } = cachePolicy.revalidatedPolicy(updatedReq, updatedResponse);
+							this.cacheStore.set(
+								updatedReq.url,
+								{
+									cachePolicy: updatedolicy.toObject(),
+									response: modified ? updatedResponse : cacheEntry.response,
+								},
+								this.getCacheTimeToLive(updatedolicy, updatedResponse)
+							);
 
 							return modified
 								? ngResponse
 								: convertPlainResponseToNgResponse({
 									...cacheEntry.response,
-									headers: policy.responseHeaders()
+									headers: updatedolicy.responseHeaders()
 								});
 						});
 					}
@@ -74,12 +76,14 @@ export class HttpCacheControlInterceptor implements HttpInterceptor {
 						const response = convertNgResponseToPlainResponse(ngResponse);
 						const cachePolicy = new HCS(incomingReq, response, this.cachePolicyOptions);
 						if (cachePolicy.storable()) {
-							this.cacheStore.set(incomingReq.url, {
-								response,
-								cachePolicy: cachePolicy.toObject(),
-								// TODO: because of this it might be removed from cache when it shouldn't (etag)
-								// }, cachePolicy.timeToLive());
-							});
+							this.cacheStore.set(
+								incomingReq.url,
+								{
+									response,
+									cachePolicy: cachePolicy.toObject(),
+								},
+								this.getCacheTimeToLive(cachePolicy, response)
+							);
 						}
 						return ngResponse;
 					});
@@ -111,6 +115,12 @@ export class HttpCacheControlInterceptor implements HttpInterceptor {
 					return stateEvent;
 				})
 			)
+	}
+
+	private getCacheTimeToLive(cachePolicy: HttpCacheSemantics, response: HttpCacheSemanticsResponse): number | undefined {
+		// if there is an etag, response might be revalidated after it expires
+		// so should not be thrown away when time to live expires
+		return response.headers["etag"] ? undefined : cachePolicy.timeToLive();
 	}
 
 }

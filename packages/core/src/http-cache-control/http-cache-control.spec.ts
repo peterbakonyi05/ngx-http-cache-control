@@ -158,7 +158,7 @@ describe("HttpCacheControlIntegrationSpecs", () => {
 			});
 		});
 
-		describe("and server responsds with not modified after cache expires", () => {
+		describe("and server responds with not modified after cache expires", () => {
 			let secondReq: TestRequest;
 			let secondResponse: object;
 
@@ -187,7 +187,7 @@ describe("HttpCacheControlIntegrationSpecs", () => {
 
 		});
 
-		describe("and server responsds with an updated response after cache expires", () => {
+		describe("and server responds with an updated response after cache expires", () => {
 			let secondReq: TestRequest;
 			let secondResponse: object;
 
