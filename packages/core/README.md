@@ -2,13 +2,13 @@
 
 ## How to use this package?
 
-### Install module
+### Install
 
 ```sh
 npm i @ngx-http-cache-control/core
 ```
 
-### Import the ng module
+### Import Angular module
 This package should only be imported part of the server-side Angular module. Typically that module is placed in a file named `app.server.module.ts`. [universal-starter](https://github.com/angular/universal-starter/blob/master/src/app/app.server.module.ts) can serve as a good reference point.
 
 ```ts
@@ -36,7 +36,7 @@ export class AppServerModule { }
 
 #### Overriding default memory cache config
 ```ts
-import { MemoryCacheStoreConfig, T_MEMORY_CACHE_STORE_CONFIG, HttpCacheControlCoreModule} from "@ngx-http-cache-control/core";
+import { MemoryCacheStoreConfig, T_MEMORY_CACHE_STORE_CONFIG } from "@ngx-http-cache-control/core";
 
 @NgModule({
   imports: [
@@ -64,7 +64,7 @@ Default values should be fine for most use-cases.
 
 
 ```ts
-import { CachePolicyOptions, T_CACHE_POLICY_OPTIONS, HttpCacheControlCoreModule} from "@ngx-http-cache-control/core";
+import { CachePolicyOptions, T_CACHE_POLICY_OPTIONS } from "@ngx-http-cache-control/core";
 
 @NgModule({
   imports: [
@@ -121,10 +121,9 @@ export class MyCacheStore implements CacheStore {
      * If you don't use it and store the data forever, it will not cause any problems.
      * Library validates max age based on the headers and won't use cached response if it expired
      */
-	set(key: string, item: T, maxAge?: number): Promise<void> {
+    set(key: string, item: T, maxAge?: number): Promise<void> {
         // TODO: implement
     }
-
 }
 
 ```
@@ -143,12 +142,13 @@ For a more complex application with high-traffic, making those HTTP calls and wa
 
 ```
 Simple example without caching API calls:
-* 5 concurrent requests per second to get the same page (this could be the average traffic hitting your home page)
-* for each request, app needs to make 10 API calls to render the view (get the footer, menu, some banners, promotions or whatever)
+* 5 concurrent requests per second to get the same page (could be the average traffic hitting your home page)
+* for each request, app needs to make 10 API calls to render the view (get footer, menu, banners etc.)
 
-That's 50 HTTP calls to the API per second, or 90.000 HTTP calls per 30min
+That's 50 HTTP calls to the API per second. 90.000 HTTP calls each 30 minutes.
 
-If all those API calls return Cache-Control headers and allow caching for 30 minutes, then by simply using `@ngx-http-cache-control/core` library, it could be  10 HTTP calls per 30minutes.
+If all those API calls return Cache-Control headers and allow caching for 30 minutes,
+then by using `@ngx-http-cache-control/core` library, it could be 10 HTTP calls per 30 minutes.
 
 Probably a real-life scenario is more complex than this, but the performance improvements can be huge.
 ```
