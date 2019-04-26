@@ -1,6 +1,6 @@
 {
   "name": "@ngx-http-cache-control/core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Server-Side Angular Interceptor for HTTP level caching based on HTTP Cache-Control headers",
   "keywords": [
     "angular",
