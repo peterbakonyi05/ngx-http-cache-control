@@ -152,6 +152,45 @@ import { MyCacheStore } from "./my-cache-store";
 export class AppServerModule { }
 ```
 
+#### Logging
+By default nothing is logged. If you'd like to see console logs for debugging purposes, you can set `process.env.TRACE_NG_HTTP_CACHE` env variable to a truthy value when starting the server.
+
+```shell
+process.env.TRACE_NG_HTTP_CACHE node your-server.js
+```
+
+#### Monitoring the behavior using events
+If you'd like to monitor how the cache behaves (which requests are getting cached, when is a response served from cache etc.), you can subscribe to the events emitted by the http interceptor.
+
+Events are strongly typed.
+
+```ts
+import { HttpCacheControlInterceptor, ReturnResponseFromCacheEvent } from "@ngx-http-cache-control/core";
+
+
+@NgModule({
+  imports: [
+    AppModule,
+    ServerModule,
+    ModuleMapLoaderModule,
+    HttpCacheControlCoreModule
+  ],
+  bootstrap: [AppComponent]
+})
+export class AppServerModule {
+
+  constructor(interceptor: HttpCacheControlInterceptor) {
+    // you can inject the interceptor anywhere in your app
+    interceptor.events.subscribe(event => {
+      if (event instanceof ReturnResponseFromCacheEvent) {
+        // do something
+      }
+    })
+  }
+
+}
+```
+
 ## Why was this package created?
 
 ### Problem
@@ -210,6 +249,3 @@ Specs:
 Under the hood this package is using [http-cache-semantics](https://www.npmjs.com/package/http-cache-semantics) package to decide when a response can be served from the cache instead of making an HTTP call.
 
 It also supports revalidation of staled requests.
-
-
-

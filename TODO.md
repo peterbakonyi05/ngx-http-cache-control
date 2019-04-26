@@ -40,8 +40,8 @@
     * ~~which status codes can be cached, which cannot?~~
     * ~~max-age invalid values~~
 * ~~Write core README~~
+* ~~support logging and debug mode~~
 * Publish beta
-* support logging and debug mode
 * Investigate and maybe add support for different Vary headers
     * With current implementation when there is an incoming new request with a different vary, it will simply override the previous request in the cache. Investigate and potentially implement an option whether requests to the same url with different headers should be treated differently or not. Before also check how it is implemented exactly in `http-cache-semantics` 
 * double-check `trustServerDate` option ==> makes sense to expose these
