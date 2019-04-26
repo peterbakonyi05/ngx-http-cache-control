@@ -1,8 +1,22 @@
 {
   "name": "@ngx-http-cache-control/core",
   "version": "0.1.0",
-  "description": "",
-  "author": "Peter Bakonyi",
+  "description": "Server-Side Angular Interceptor for HTTP level caching based on HTTP Cache-Control headers",
+  "keywords": [
+    "angular",
+    "angular 2",
+    "ngx",
+    "server-side rendering",
+    "universal",
+    "http caching",
+    "interceptor"
+  ],
+  "homepage": "https://github.com/peterbakonyi05/ngx-http-cache-control/blob/master/packages/core/README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/peterbakonyi05/ngx-http-cache-control"
+  },
+  "author": "Peter Bakonyi <peter.bakonyi05@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "http-cache-semantics": "^4.0.3",
