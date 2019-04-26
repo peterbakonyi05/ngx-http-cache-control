@@ -13,7 +13,10 @@ This package should only be imported part of the server-side Angular module. Typ
 
 ```ts
 import { NgModule } from '@angular/core';
-import { ServerModule, ServerTransferStateModule } from '@angular/platform-server';
+import {
+  ServerModule,
+  ServerTransferStateModule
+} from '@angular/platform-server';
 import { HttpCacheControlCoreModule } from "@ngx-http-cache-control/core";
 
 import { AppModule } from './app.module';
@@ -36,7 +39,10 @@ export class AppServerModule { }
 
 #### Overriding default memory cache config
 ```ts
-import { MemoryCacheStoreConfig, T_MEMORY_CACHE_STORE_CONFIG } from "@ngx-http-cache-control/core";
+import {
+  MemoryCacheStoreConfig,
+  T_MEMORY_CACHE_STORE_CONFIG
+} from "@ngx-http-cache-control/core";
 
 @NgModule({
   imports: [
@@ -64,7 +70,10 @@ Default values should be fine for most use-cases.
 
 
 ```ts
-import { CachePolicyOptions, T_CACHE_POLICY_OPTIONS } from "@ngx-http-cache-control/core";
+import {
+  CachePolicyOptions,
+  T_CACHE_POLICY_OPTIONS
+} from "@ngx-http-cache-control/core";
 
 @NgModule({
   imports: [
@@ -115,11 +124,14 @@ export class MyCacheStore<T> implements CacheStore<T> {
     /**
      * Store the data cached under the given key.
      *
-     * `item` can be an object and need to be serialized if you use a store that only accepts string values
+     * `item` can be an object and need to be serialized
+     * if you use a store that only accepts string values.
      *
-     * Using `maxAge` is optional. It can help keeping the cache size smaller.
-     * If you don't use it and store the data forever, it will not cause any problems.
-     * Library validates max age based on the headers and won't use cached response if it expired
+     * Using `maxAge` is optional.
+     * It can help keeping the cache size smaller.
+     * If you don't use it and store the data forever,
+     * it will not cause any problems. Library validates max age
+     * based on the headers and won't use cached response if it expired.
      */
     set(key: string, item: T, maxAge?: number): Promise<void> {
         // implementation comes here
@@ -130,7 +142,10 @@ export class MyCacheStore<T> implements CacheStore<T> {
 
 ##### Then provide your service as the cache store
 ```ts
-import { CachePolicyOptions, T_CACHE_POLICY_OPTIONS } from "@ngx-http-cache-control/core";
+import {
+  CachePolicyOptions,
+  T_CACHE_POLICY_OPTIONS
+} from "@ngx-http-cache-control/core";
 
 import { MyCacheStore } from "./my-cache-store";
 
@@ -165,7 +180,10 @@ If you'd like to monitor how the cache behaves (which requests are getting cache
 Events are strongly typed.
 
 ```ts
-import { HttpCacheControlInterceptor, ReturnResponseFromCacheEvent } from "@ngx-http-cache-control/core";
+import {
+  HttpCacheControlInterceptor,
+  ReturnResponseFromCacheEvent
+} from "@ngx-http-cache-control/core";
 
 
 @NgModule({
@@ -205,16 +223,21 @@ For a more complex application with high-traffic, making those HTTP calls and wa
 
 ```
 Simple example without caching API calls:
-* 5 concurrent requests per second to get the same page (could be the average traffic hitting your home page)
-* for each request, app needs to make 10 API calls to render the view (get footer, menu, banners etc.)
+* 5 concurrent req per second to get the same page
+    (it could be the traffic hitting your home page)
+* for each request, app needs to make 10 API calls to render the view
+    (to get footer, menu, banners etc.)
 
-That's 50 HTTP calls to the API per second. 90.000 HTTP calls each 30 minutes.
+That's 50 HTTP calls to the API per second.
+90.000 HTTP calls each 30 minutes.
 
-If all those API calls return Cache-Control headers and allow caching for 30 minutes,
-then by using `@ngx-http-cache-control/core` library, it could be 10 HTTP calls per 30 minutes.
+If all those API calls return Cache-Control headers
+and allow caching for 30 minutes, then by using
+`@ngx-http-cache-control/core`, it could be 10 HTTP calls per 30 minutes.
+
+```
 
 Probably a real-life scenario is more complex than this, but the performance improvements can be huge.
-```
 
 
 ### Solution 1 - Addig a cache server in front of your site
@@ -237,7 +260,7 @@ Using this library to cache the responses in-memory. Compared to solution 2 and 
 
 ## How does it work?
 
-HTTP specifies Cache-Control headers to levarge the performance improvement of caching.
+HTTP specifies Cache-Control headers to leverage the performance improvement of caching.
 
 Read a short explanation:
 * https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching
