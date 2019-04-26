@@ -1,11 +1,17 @@
 /// <reference path="../typings/http-cache-semantics.d.ts" />
-import { Injectable, Inject, Optional } from "@angular/core";
+import { Injectable, Inject } from "@angular/core";
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpResponse, HttpHeaders, HttpEvent, HttpErrorResponse } from "@angular/common/http";
-import { from, of, Observable, throwError } from "rxjs";
+import { from, of, Observable, Subject, throwError } from "rxjs";
 import { catchError, map, mergeMap } from "rxjs/operators";
 import * as HCS from "http-cache-semantics";
 
 import { T_CACHE_STORE, CacheStore } from "../cache-store/cache-store.model";
+import {
+	HttpCacheControlEvent,
+	ReturnResponseFromCacheEvent,
+	StoreResponseInCacheEvent,
+	UpdateResponseInCacheEvent
+} from "../events/events.model";
 
 import { CacheEntry, CachePolicyOptions, T_CACHE_POLICY_OPTIONS } from "./http-cache-control.model";
 import {
@@ -14,12 +20,18 @@ import {
 	convertPlainResponseToNgResponse
 } from "./http-cache-control.util";
 
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class HttpCacheControlInterceptor implements HttpInterceptor {
+
+	get events(): Observable<HttpCacheControlEvent> {
+		return this._events.asObservable();
+	}
+
+	private _events = new Subject<HttpCacheControlEvent>();
 
 	constructor(
 		@Inject(T_CACHE_STORE) private cacheStore: CacheStore<CacheEntry>,
-		@Optional() @Inject(T_CACHE_POLICY_OPTIONS) private cachePolicyOptions: CachePolicyOptions | null
+		@Inject(T_CACHE_POLICY_OPTIONS) private cachePolicyOptions: CachePolicyOptions
 	) {
 	}
 
@@ -36,10 +48,12 @@ export class HttpCacheControlInterceptor implements HttpInterceptor {
 					if (cacheEntry) {
 						const cachePolicy = HCS.fromObject(cacheEntry.cachePolicy);
 						if (cachePolicy.satisfiesWithoutRevalidation(incomingReq)) {
-							return of(convertPlainResponseToNgResponse({
+							const cachedNgResponse = convertPlainResponseToNgResponse({
 								...cacheEntry.response,
 								headers: cachePolicy.responseHeaders()
-							}));
+							});
+							this._events.next(new ReturnResponseFromCacheEvent(incomingNgReq, cachedNgResponse));
+							return of(cachedNgResponse);
 						}
 
 						// change the request to ask the origin server if the cached response can be used
@@ -51,24 +65,34 @@ export class HttpCacheControlInterceptor implements HttpInterceptor {
 						const updatedNgReq = incomingNgReq.clone({
 							headers: new HttpHeaders(updatedHeaders)
 						});
-						return this.runHandler(updatedNgReq, handler, ngResponse => {
-							const updatedResponse = convertNgResponseToPlainResponse(ngResponse);
-							const { policy: updatedolicy, modified } = cachePolicy.revalidatedPolicy(updatedReq, updatedResponse);
-							this.cacheStore.set(
-								updatedReq.url,
-								{
-									cachePolicy: updatedolicy.toObject(),
-									response: modified ? updatedResponse : cacheEntry.response,
-								},
-								this.getCacheTimeToLive(updatedolicy, updatedResponse)
-							);
-
-							return modified
-								? ngResponse
+						return this.runHandler(updatedNgReq, handler, ngResponseOrNotModified => {
+							const responseOrNotModified = convertNgResponseToPlainResponse(ngResponseOrNotModified);
+							const { policy: updatedolicy, modified } = cachePolicy.revalidatedPolicy(updatedReq, responseOrNotModified);
+							const timeToLive = this.getCacheTimeToLive(updatedolicy, responseOrNotModified);
+							const ngResponse = modified
+								? ngResponseOrNotModified
 								: convertPlainResponseToNgResponse({
 									...cacheEntry.response,
 									headers: updatedolicy.responseHeaders()
 								});
+							this._events.next(new UpdateResponseInCacheEvent(
+								incomingNgReq,
+								updatedNgReq,
+								ngResponseOrNotModified,
+								ngResponse,
+								timeToLive,
+								modified
+							));
+							this.cacheStore.set(
+								updatedReq.url,
+								{
+									cachePolicy: updatedolicy.toObject(),
+									response: modified ? responseOrNotModified : cacheEntry.response,
+								},
+								timeToLive
+							);
+
+							return ngResponse;
 						});
 					}
 
@@ -76,14 +100,18 @@ export class HttpCacheControlInterceptor implements HttpInterceptor {
 						const response = convertNgResponseToPlainResponse(ngResponse);
 						const cachePolicy = new HCS(incomingReq, response, this.cachePolicyOptions);
 						if (cachePolicy.storable()) {
-							this.cacheStore.set(
-								incomingReq.url,
-								{
-									response,
-									cachePolicy: cachePolicy.toObject(),
-								},
-								this.getCacheTimeToLive(cachePolicy, response)
-							);
+							const timeToLive = this.getCacheTimeToLive(cachePolicy, response);
+							if (timeToLive !== 0) {
+								this._events.next(new StoreResponseInCacheEvent(incomingNgReq, ngResponse, timeToLive));
+								this.cacheStore.set(
+									incomingReq.url,
+									{
+										response,
+										cachePolicy: cachePolicy.toObject(),
+									},
+									timeToLive
+								);
+							}
 						}
 						return ngResponse;
 					});

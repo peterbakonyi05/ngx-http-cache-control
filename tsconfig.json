@@ -24,7 +24,8 @@
 		"inlineSources": true,
 		"pretty": true,
 		"types": [
-			"jest"
+			"jest",
+			"node"
 		],
 		"paths": {
 			"@ngx-http-cache-control/*": [

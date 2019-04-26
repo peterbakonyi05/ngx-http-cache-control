@@ -5,6 +5,14 @@ import * as DateMock from "jest-date-mock";
 
 import { HttpCacheControlCoreModule } from "../module";
 
+import {
+	HttpCacheControlEvent,
+	ReturnResponseFromCacheEvent,
+	StoreResponseInCacheEvent,
+	UpdateResponseInCacheEvent
+} from "../events/events.model";
+import { HttpCacheControlInterceptor } from "./http-cache-control.interceptor";
+
 const MOCK_RESPONSE = {
 	heroes: [
 		{ name: "Batman", secretIdentity: "Bruce Wayne" },
@@ -34,6 +42,7 @@ const MOCK_MAX_AGE_SEC = 5;
 describe("HttpCacheControlIntegrationSpecs", () => {
 	let httpBackend: HttpTestingController;
 	let httpClient: HttpClient;
+	let cacheControlEvents: jasmine.Spy;
 
 	beforeAll(() => {
 		TestBed.configureTestingModule({
@@ -45,6 +54,9 @@ describe("HttpCacheControlIntegrationSpecs", () => {
 
 		httpBackend = TestBed.get(HttpTestingController);
 		httpClient = TestBed.get(HttpClient);
+		cacheControlEvents = jasmine.createSpy("cacheControlEvents");
+		const cacheControlInterceptor = TestBed.get(HttpCacheControlInterceptor) as HttpCacheControlInterceptor;
+		cacheControlInterceptor.events.subscribe(cacheControlEvents);
 	});
 
 	afterEach(() => {
@@ -79,6 +91,12 @@ describe("HttpCacheControlIntegrationSpecs", () => {
 				expect(firstResponse).toEqual(MOCK_RESPONSE);
 			});
 
+			it("should emit StoreResponseInCacheEvent event", () => {
+				expect(cacheControlEvents.calls.count()).toBe(1);
+				const lastEvent = getLastCacheEvent();
+				expect(lastEvent instanceof StoreResponseInCacheEvent).toBe(true);
+			});
+
 			describe("and there is another request to the same endpoint within the given max age", () => {
 				let secondReq: TestRequest;
 				let secondResponse: object;
@@ -94,6 +112,12 @@ describe("HttpCacheControlIntegrationSpecs", () => {
 
 				it("should set the response as expected", () => {
 					expect(secondResponse).toEqual(MOCK_RESPONSE);
+				});
+
+				it("should emit ReturnResponseFromCacheEvent event", () => {
+					expect(cacheControlEvents.calls.count()).toBe(2);
+					const lastEvent = getLastCacheEvent();
+					expect(lastEvent instanceof ReturnResponseFromCacheEvent).toBe(true);
 				});
 			});
 
@@ -120,6 +144,12 @@ describe("HttpCacheControlIntegrationSpecs", () => {
 				it("should set the response as expected", () => {
 					expect(secondResponse).toEqual(MOCK_RESPONSE_NEW);
 				});
+
+				it("should emit StoreResponseInCacheEvent event", () => {
+					expect(cacheControlEvents.calls.count()).toBe(3);
+					const lastEvent = getLastCacheEvent();
+					expect(lastEvent instanceof StoreResponseInCacheEvent).toBe(true);
+				});
 			});
 
 			describe("and there is another request to a different endpoint that does not support caching", () => {
@@ -140,6 +170,10 @@ describe("HttpCacheControlIntegrationSpecs", () => {
 				it("should set the response as expected", () => {
 					expect(secondResponse).toEqual(MOCK_VILLAIN_RESPONSE);
 				});
+
+				it("should not emit any events", () => {
+					expect(cacheControlEvents.calls.count()).toBe(3);
+				});
 			});
 		});
 	});
@@ -156,6 +190,12 @@ describe("HttpCacheControlIntegrationSpecs", () => {
 					"etag": "abc123"
 				}
 			});
+		});
+
+		it("should emit StoreResponseInCacheEvent event", () => {
+			expect(cacheControlEvents.calls.count()).toBe(4);
+			const lastEvent = getLastCacheEvent();
+			expect(lastEvent instanceof StoreResponseInCacheEvent).toBe(true);
 		});
 
 		describe("and server responds with not modified after cache expires", () => {
@@ -185,6 +225,13 @@ describe("HttpCacheControlIntegrationSpecs", () => {
 				expect(secondResponse).toEqual(MOCK_RESPONSE);
 			});
 
+			it("should emit UpdateResponseInCacheEvent event", () => {
+				expect(cacheControlEvents.calls.count()).toBe(5);
+				const lastEvent = getLastCacheEvent() as UpdateResponseInCacheEvent;
+				expect(lastEvent instanceof UpdateResponseInCacheEvent).toBe(true);
+				expect(lastEvent.modified).toBe(false)
+			});
+
 		});
 
 		describe("and server responds with an updated response after cache expires", () => {
@@ -211,7 +258,18 @@ describe("HttpCacheControlIntegrationSpecs", () => {
 			it("should set the response with thew new data", () => {
 				expect(secondResponse).toEqual(MOCK_RESPONSE_NEW);
 			});
+
+			it("should emit UpdateResponseInCacheEvent event", () => {
+				expect(cacheControlEvents.calls.count()).toBe(6);
+				const lastEvent = getLastCacheEvent() as UpdateResponseInCacheEvent;
+				expect(lastEvent instanceof UpdateResponseInCacheEvent).toBe(true);
+				expect(lastEvent.modified).toBe(true)
+			});
 		});
 	});
+
+	function getLastCacheEvent(): HttpCacheControlEvent {
+		return cacheControlEvents.calls.mostRecent().args[0];
+	}
 
 });
